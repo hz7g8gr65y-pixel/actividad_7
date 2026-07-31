@@ -1,0 +1,18 @@
+"""Se encarga de gestionar el almacenamiento de los datos en memoria."""
+from models.inventory import Inventory
+
+class InventoryRepository:
+    def __init__(self) -> None:
+        # Los campos son: fname, lname, email, age, product_name, price
+        self._items: list[Inventory] = [
+            Inventory("Juan", "Santana", "juan@gmail.com", 22, "laptop", 850.00),
+            Inventory("Carlos", "Pérez", "carlos@gmail.com", 18, "Accesorios", 45.00),
+            Inventory("Maria", "Sosa", "maria@gmail.com", 32, "monitor", 180.00),
+        ]
+
+    def find_all(self) -> list[Inventory]:
+        """Retorna todos los ítems en el inventario."""
+        return self._items
+
+    def create_one(self, item: Inventory):
+        self._items.append(item)
