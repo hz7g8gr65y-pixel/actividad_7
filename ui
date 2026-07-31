@@ -1,0 +1,107 @@
+from services.user_service import InventoryService
+import tkinter as tk
+from tkinter import ttk 
+
+class AppWindow(tk.Tk):
+    def __init__(self, service: InventoryService) -> None:
+        super().__init__()
+        self.service = service
+
+        self.title("Tkinter con POO + Capas")
+        self.geometry("500x500")
+
+        self.create_widget()
+
+    def create_widget(self):
+        self.render_entries()
+
+        # Cambiado create_new_user por create_new_item:
+        self.button = tk.Button(
+            self, text="Ingresa un usuario e inventario", command=self.create_new_item)
+        self.button.pack(pady=5)
+
+        self.create_data_table()
+        self.render_data_table()
+
+    def render_entries(self):
+        label_fname = tk.Label(self, text="Ingresa tu nombre")
+        label_fname.pack()
+        self.entry_fname = tk.Entry(self)
+        self.entry_fname.pack()
+
+        label_lname = tk.Label(self, text="Ingresa tu apellido")
+        label_lname.pack()
+        self.entry_lname = tk.Entry(self)
+        self.entry_lname.pack()
+
+        label_age = tk.Label(self, text="Ingresa tu edad")
+        label_age.pack()
+        self.entry_age = tk.Entry(self)
+        self.entry_age.pack()
+
+        label_email = tk.Label(self, text="Ingresa tu correo")
+        label_email.pack()
+        self.entry_email = tk.Entry(self)
+        self.entry_email.pack()
+
+        label_product = tk.Label(self, text="Ingresa el nombre del producto")
+        label_product.pack()
+        self.entry_product = tk.Entry(self)
+        self.entry_product.pack()
+
+        label_price = tk.Label(self, text="Ingresa el precio del producto")
+        label_price.pack()
+        self.entry_price = tk.Entry(self)
+        self.entry_price.pack()
+
+    def clear_entries(self):
+        self.entry_fname.delete(0, "end")
+        self.entry_lname.delete(0, "end")
+        self.entry_age.delete(0, "end")
+        self.entry_email.delete(0, "end")
+        self.entry_product.delete(0, "end")
+        self.entry_price.delete(0, "end")
+
+        self.entry_fname.focus()
+
+    def create_new_item(self):
+        fname = self.entry_fname.get()
+        lname = self.entry_lname.get()
+        age = self.entry_age.get()
+        email = self.entry_email.get()
+        product_name = self.entry_product.get()
+        price = self.entry_price.get()
+
+        self.service.create_one(fname, lname, email, int(age), product_name, float(price))
+        self.render_data_table()
+        self.clear_entries()
+
+    def create_data_table(self):
+        self.tree = ttk.Treeview(self, columns=(
+            "fname", "lname", "age", "email", "product_name", "price"), show="headings")
+
+        self.tree.column("fname", anchor="center", width=80)
+        self.tree.column("lname", anchor="center", width=80)
+        self.tree.column("age", anchor="center", width=40)
+        self.tree.column("email", anchor="center", width=180)
+        self.tree.column("product_name", anchor="center", width=100)
+        self.tree.column("price", anchor="center", width=80)
+
+        self.tree.heading("fname", text="Nombre")
+        self.tree.heading("lname", text="Apellido")
+        self.tree.heading("age", text="Edad")
+        self.tree.heading("email", text="Email")
+        self.tree.heading("product_name", text="Producto")
+        self.tree.heading("price", text="Precio")
+
+        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
+
+    def render_data_table(self):
+        items = self.service.find_all()
+
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        for item in items:
+            self.tree.insert("", "end", values=(
+                item.fname, item.lname, item.age, item.email, item.product_name, f"${item.price:.2f}"))
