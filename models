@@ -1,0 +1,11 @@
+"""Esta clase modela los datos de un usuario e inventario"""
+from dataclasses import dataclass
+
+@dataclass
+class Inventory:
+    fname: str
+    lname: str 
+    email: str
+    age: int
+    product_name: str
+    price: float
